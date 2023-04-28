@@ -1,4 +1,4 @@
-package org.bmsk.beomchat
+package org.bmsk.beomchat.ui
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import org.bmsk.beomchat.R
 import org.bmsk.beomchat.databinding.ActivitySignInBinding
 
 class SignInActivity : AppCompatActivity() {
