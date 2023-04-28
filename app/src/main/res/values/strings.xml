@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">BeomChat</string>
+    <string name="hint_email">email</string>
+    <string name="hint_password">password</string>
+    <string name="sign_in">로그인</string>
+    <string name="sign_up">회원 가입</string>
+
+    <string name="email_or_password_not_input">이메일 또는 패스워드가 입력되지 않았습니다.</string>
+    <string name="fail_sign_up">회원 가입에 실패했습니다.</string>
+    <string name="successful_sign_up">회원가입에 성공했습니다.</string>
+    <string name="fail_sign_in">로그인에 실패했습니다.</string>
+    <string name="user_list">사용자 목록</string>
+    <string name="chatting">채팅 목록</string>
+    <string name="my_page">마이 페이지</string>
+    <string name="chat_list">채팅 목록</string>
+    <string name="do_apply">적용하기</string>
+    <string name="sign_out">로그아웃</string>
+    <string name="change_profile_content">프로필 변경</string>
+    <string name="state_message">상태 메시지</string>
+    <string name="send">전송</string>
+    <string name="default_notification_channel_id">default_notification_channel_id</string>
+    <string name="channel_name">chat_notification</string>
+    <string name="channel_description">채팅 알림입니다.</string>
+</resources>
