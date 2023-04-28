@@ -343,3 +343,5 @@ hs_err_pid*
 .firebase/
 
 # End of https://www.toptal.com/developers/gitignore/api/firebase
+
+/app/src/main.res/values/api_key.xml

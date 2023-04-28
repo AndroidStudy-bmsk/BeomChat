@@ -3,6 +3,7 @@ package org.bmsk.beomchat.ui.chatdetail
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -22,11 +23,9 @@ import org.bmsk.beomchat.data.db.Key.Companion.DB_CHAT_ROOMS
 import org.bmsk.beomchat.data.db.Key.Companion.DB_CHAT_ROOM_ID
 import org.bmsk.beomchat.data.db.Key.Companion.DB_LAST_MESSAGE
 import org.bmsk.beomchat.data.db.Key.Companion.DB_OTHER_USER_ID
-import org.bmsk.beomchat.data.db.Key.Companion.DB_OTHER_USER_KEY
 import org.bmsk.beomchat.data.db.Key.Companion.DB_OTHER_USER_NAME
 import org.bmsk.beomchat.data.db.Key.Companion.DB_URL
 import org.bmsk.beomchat.data.db.Key.Companion.DB_USERS
-import org.bmsk.beomchat.data.db.Key.Companion.FCM_SERVER_KEY
 import org.bmsk.beomchat.data.db.Key.Companion.PUT_EXTRA_CHAT_ROOM_ID
 import org.bmsk.beomchat.data.db.Key.Companion.PUT_EXTRA_OTHER_USER_ID
 import org.bmsk.beomchat.data.model.ChatItem
@@ -38,6 +37,7 @@ import java.io.IOException
 class ChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatBinding
     private lateinit var chatAdapter: ChatAdapter
+    private lateinit var linearLayoutManager: LinearLayoutManager
 
     private var chatRoomId: String = ""
     private var otherUserId: String = ""
@@ -55,6 +55,7 @@ class ChatActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         chatAdapter = ChatAdapter()
+        linearLayoutManager = LinearLayoutManager(applicationContext)
 
         chatRoomId = intent.getStringExtra(PUT_EXTRA_CHAT_ROOM_ID) ?: return
         otherUserId = intent.getStringExtra(PUT_EXTRA_OTHER_USER_ID) ?: return
@@ -96,7 +97,6 @@ class ChatActivity : AppCompatActivity() {
                     chatItem ?: return
 
                     chatItemList.add(chatItem)
-
                     chatAdapter.submitList(chatItemList.toMutableList())
                 }
 
@@ -116,8 +116,20 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun initChatRecyclerView() {
+        chatAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+
+                linearLayoutManager.smoothScrollToPosition(
+                    binding.chatRecyclerView,
+                    null,
+                    chatAdapter.itemCount
+                )
+            }
+        })
+
         binding.chatRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = linearLayoutManager
             adapter = chatAdapter
         }
     }
@@ -163,7 +175,7 @@ class ChatActivity : AppCompatActivity() {
                 root.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
             val request =
                 Request.Builder().post(requestBody).url(FCM_SEND_URL)
-                    .header("Authorization", "key=$FCM_SERVER_KEY")
+                    .header("Authorization", "key=${getString(R.string.fcm_server_key)}")
                     .build()
             okHttpClient.newCall(request).enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
