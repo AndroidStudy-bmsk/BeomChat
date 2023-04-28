@@ -16,6 +16,8 @@ class Key {
         const val DB_LAST_MESSAGE = "lastMessage"
         const val DB_OTHER_USER_KEY = "otherUserKey"
 
+        const val FCM_SERVER_KEY = "AAAAZrobvno:APA91bHKWYkzWtBZwOzbLyYEhbtxtQS3aml2qjNhcbZFldsTDCtxpIKi8b8j60lrZC4dUZtYx-b3YIxDNIywezlWamZ6Vqw1KD5KpweW-EvWvm92JA33ZtXil7m7fxbTMZgRbs1_obBS"
+
         const val PUT_EXTRA_OTHER_USER_ID = "OTHER_USER_ID"
         const val PUT_EXTRA_CHAT_ROOM_ID = "CHAR_ROOM_ID"
     }
