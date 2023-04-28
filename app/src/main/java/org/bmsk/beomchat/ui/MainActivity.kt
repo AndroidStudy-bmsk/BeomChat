@@ -8,14 +8,14 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import org.bmsk.beomchat.R
 import org.bmsk.beomchat.databinding.ActivityMainBinding
-import org.bmsk.beomchat.ui.chatroom.ChatFragment
+import org.bmsk.beomchat.ui.chatroom.ChatListFragment
 import org.bmsk.beomchat.ui.mypage.MyPageFragment
 import org.bmsk.beomchat.ui.userlist.UserFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val userFragment = UserFragment()
-    private val chatFragment = ChatFragment()
+    private val chatListFragment = ChatListFragment()
     private val myPageFragment = MyPageFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,10 +37,11 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 R.id.chatRoomList -> {
-
+                    replaceFragment(chatListFragment)
                     return@setOnItemSelectedListener true
                 }
                 R.id.myPage -> {
+                    replaceFragment(myPageFragment)
                     return@setOnItemSelectedListener true
 
                 }
