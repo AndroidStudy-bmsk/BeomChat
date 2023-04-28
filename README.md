@@ -1,6 +1,9 @@
 # BeomChat
 
 - Firebase 사용해보기
+![](.README_images/BeomChat.jpeg)
+
+![](.README_images/beomchat_sample.gif)
 
 ## Firebase
 
