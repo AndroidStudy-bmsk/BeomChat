@@ -8,22 +8,26 @@ import androidx.recyclerview.widget.RecyclerView
 import org.bmsk.beomchat.data.model.UserItem
 import org.bmsk.beomchat.databinding.ItemUserBinding
 
-class UserAdapter : ListAdapter<UserItem, UserAdapter.ViewHolder>(diffUtil) {
+class UserAdapter(
+    private val onClick: (UserItem) -> Unit
+) : ListAdapter<UserItem, UserAdapter.ViewHolder>(diffUtil) {
     inner class ViewHolder(private val binding: ItemUserBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: UserItem) {
             binding.nicknameTextView.text = item.userName
             binding.descriptionTextView.text = item.description
+
+            binding.root.setOnClickListener {
+                onClick(item)
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             ItemUserBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
+                LayoutInflater.from(parent.context), parent, false
             )
         )
     }

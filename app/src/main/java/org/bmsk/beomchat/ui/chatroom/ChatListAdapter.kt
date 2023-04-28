@@ -8,13 +8,19 @@ import androidx.recyclerview.widget.RecyclerView
 import org.bmsk.beomchat.data.model.ChatRoomItem
 import org.bmsk.beomchat.databinding.ItemChatroomBinding
 
-class ChatListAdapter : ListAdapter<ChatRoomItem, ChatListAdapter.ViewHolder>(diffUtil) {
+class ChatListAdapter(
+    private val onClick: (ChatRoomItem) -> Unit
+) : ListAdapter<ChatRoomItem, ChatListAdapter.ViewHolder>(diffUtil) {
     inner class ViewHolder(private val binding: ItemChatroomBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ChatRoomItem) {
             binding.nicknameTextView.text = item.otherUserName
             binding.lastMessageTextView.text = item.lastMessage
+
+            binding.root.setOnClickListener {
+                onClick(item)
+            }
         }
     }
 

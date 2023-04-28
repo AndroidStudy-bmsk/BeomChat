@@ -37,31 +37,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/emailEditText" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/signInButton"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginStart="70dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="70dp"
-        android:background="@drawable/background_button_r20"
+        android:backgroundTint="@color/button_black"
         android:text="@string/sign_in"
         android:textColor="@color/white"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/passwordEditText" />
 
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/signUpButton"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginStart="70dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="70dp"
-        android:background="@drawable/background_button_r20"
+        android:backgroundTint="@color/button_black"
         android:text="@string/sign_up"
         android:textColor="@color/white"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/signInButton" />

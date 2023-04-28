@@ -17,4 +17,5 @@
     <string name="sign_out">로그아웃</string>
     <string name="change_profile_content">프로필 변경</string>
     <string name="state_message">상태 메시지</string>
+    <string name="send">전송</string>
 </resources>
