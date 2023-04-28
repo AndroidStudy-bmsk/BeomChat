@@ -12,7 +12,7 @@
     <string name="user_list">사용자 목록</string>
     <string name="chatting">채팅 목록</string>
     <string name="my_page">마이 페이지</string>
-    <string name="chat_list">대화 목록</string>
+    <string name="chat_list">채팅 목록</string>
     <string name="do_apply">적용하기</string>
     <string name="sign_out">로그아웃</string>
     <string name="change_profile_content">프로필 변경</string>

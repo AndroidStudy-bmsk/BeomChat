@@ -13,7 +13,7 @@ class UserAdapter : ListAdapter<UserItem, UserAdapter.ViewHolder>(diffUtil) {
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: UserItem) {
-            binding.nicknameTextView.text = item.username
+            binding.nicknameTextView.text = item.userName
             binding.descriptionTextView.text = item.description
         }
     }
