@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">BeomChat</string>
+    <string name="hint_email">email</string>
+    <string name="hint_password">password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+
+    <string name="email_or_password_not_input">이메일 또는 패스워드가 입력되지 않았습니다.</string>
+    <string name="fail_sign_up">회원 가입에 실패했습니다.</string>
+    <string name="successful_sign_up">회원가입에 성공했습니다.</string>
+    <string name="fail_sign_in">로그인에 실패했습니다.</string>
 </resources>

@@ -31,7 +31,7 @@ render.experimental.xml
 *.keystore
 
 # Google Services (e.g. APIs or Firebase)
-google-services.json
+app/google-services.json
 
 # Android Profiling
 *.hprof
@@ -329,3 +329,17 @@ hs_err_pid*
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/android,androidstudio,macos,windows,intellij
+
+# Created by https://www.toptal.com/developers/gitignore/api/firebase
+# Edit at https://www.toptal.com/developers/gitignore?templates=firebase
+
+### Firebase ###
+.idea
+**/node_modules/*
+**/.firebaserc
+
+### Firebase Patch ###
+.runtimeconfig.json
+.firebase/
+
+# End of https://www.toptal.com/developers/gitignore/api/firebase
