@@ -10,6 +10,8 @@ class Key {
         const val DB_OTHER_USER_NAME = "otherUserName"
         const val DB_CHATS = "Chats"
         const val DB_USER_NAME = "userName"
+        const val DB_USER_ID = "userId"
+        const val DB_FCM_TOKEN = "fcmToken"
         const val DB_USER_DESCRIPTION = "description"
         const val DB_LAST_MESSAGE = "lastMessage"
         const val DB_OTHER_USER_KEY = "otherUserKey"

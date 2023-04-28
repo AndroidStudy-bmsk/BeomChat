@@ -1,15 +1,12 @@
 package org.bmsk.beomchat.ui.chatdetail
 
-import android.graphics.Color
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.bmsk.beomchat.R
 import org.bmsk.beomchat.data.model.ChatItem
 import org.bmsk.beomchat.data.model.UserItem
 import org.bmsk.beomchat.databinding.ItemChatBinding

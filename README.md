@@ -48,7 +48,8 @@
       "username": "BeomSeok2",
       "description": "밥먹고 코딩 많이 함"
     }
-  },  // ChatRoom/$uid
+  },
+  // ChatRoom/$uid
   "ChatRoom": {
     "Tjg2Gcw6dGRLnzzXa2QKV0osGLy1": {
       "userBId": {
@@ -71,7 +72,8 @@
       }
     }
   },
-  "Chat": { // Chat/$chatRoomId
+  "Chat": {
+    // Chat/$chatRoomId
     "채팅방 id": {
       "메시지 id": {
         "chatId": "String",
@@ -275,3 +277,67 @@ binding.signUpButton.setOnClickListener {
 ```
 
 ## Firebase cloud Message (FCM)
+
+Android, iOS 및 웹 애플리케이션에서 푸시 알림과 메시지 전송을 쉽게 구현할 수 있다.
+
+https://firebase.google.com/docs/cloud-messaging/android/client?hl=ko&authuser=0
+
+https://developer.android.com/guide/topics/ui/notifiers/notifications.html?authuser=0&hl=ko#ManageChannels
+
+1. 먼저 서비스를 구현해야 한다.
+
+```kotlin
+package org.bmsk.beomchat
+
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import androidx.core.app.NotificationCompat
+import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.firebase.messaging.RemoteMessage
+
+class FirebaseMessagingService : FirebaseMessagingService() {
+    override fun onMessageReceived(message: RemoteMessage) {
+        super.onMessageReceived(message)
+
+        val notificationManager = createNotificationChannel()
+
+        val body = message.notification?.body ?: ""
+        val notificationBuilder = NotificationCompat.Builder(applicationContext, getString(R.string.default_notification_channel_id))
+            .setSmallIcon(R.drawable.ic_baseline_bolt_24)
+            .setContentTitle(getString(R.string.app_name))
+            .setContentText(body)
+
+        notificationManager.notify(0, notificationBuilder.build())
+    }
+
+    override fun onNewToken(token: String) {
+        super.onNewToken(token)
+    }
+
+    private fun createNotificationChannel(): NotificationManager {
+        val name = getString(R.string.channel_name)
+        val descriptionText = getString(R.string.channel_description)
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(
+            getString(R.string.default_notification_channel_id),
+            name,
+            importance
+        ).apply {
+            description = descriptionText
+        }
+        // Register the channel with the system
+        val notificationManager: NotificationManager =
+            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+
+        return notificationManager
+    }
+}
+```
+
+![](.README_images/runtime_notification_permission.png)
+
+안드로이드 13이상에서는 런타임 권한을 필요로 한다.
+
+https://firebase.google.com/docs/cloud-messaging/http-server-ref?authuser=0&hl=ko
+

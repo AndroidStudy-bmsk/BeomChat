@@ -18,4 +18,7 @@
     <string name="change_profile_content">프로필 변경</string>
     <string name="state_message">상태 메시지</string>
     <string name="send">전송</string>
+    <string name="default_notification_channel_id">default_notification_channel_id</string>
+    <string name="channel_name">chat_notification</string>
+    <string name="channel_description">채팅 알림입니다.</string>
 </resources>
