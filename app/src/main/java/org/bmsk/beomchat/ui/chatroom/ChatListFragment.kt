@@ -24,16 +24,18 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
     private lateinit var binding: FragmentChatListBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding = FragmentChatListBinding.bind(view)
 
-        val chatListAdapter = ChatListAdapter { chatRoomItem ->
+        setupChatListAdapter()
+        fetchChatRooms()
+    }
 
+    private fun setupChatListAdapter() {
+        val chatListAdapter = ChatListAdapter { chatRoomItem ->
             val intent = Intent(context, ChatActivity::class.java).apply {
                 putExtra(PUT_EXTRA_CHAT_ROOM_ID, chatRoomItem.chatRoomId)
                 putExtra(PUT_EXTRA_OTHER_USER_ID, chatRoomItem.otherUserId)
             }
-
             startActivity(intent)
         }
 
@@ -41,7 +43,9 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
             layoutManager = LinearLayoutManager(context)
             adapter = chatListAdapter
         }
+    }
 
+    private fun fetchChatRooms() {
         val currentUserId = Firebase.auth.currentUser?.uid ?: return
         val chatRoomsDB = Firebase.database(DB_URL).reference
             .child(DB_CHAT_ROOMS)
@@ -51,12 +55,10 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
                 val chatRoomList = snapshot.children.map {
                     it.getValue(ChatRoomItem::class.java)
                 }
-                chatListAdapter.submitList(chatRoomList)
+                (binding.chatListRecyclerView.adapter as? ChatListAdapter)?.submitList(chatRoomList)
             }
 
-            override fun onCancelled(error: DatabaseError) {
-            }
-
+            override fun onCancelled(error: DatabaseError) {}
         })
     }
 }

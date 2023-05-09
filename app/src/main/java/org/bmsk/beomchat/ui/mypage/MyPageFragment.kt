@@ -24,34 +24,50 @@ class MyPageFragment : Fragment(R.layout.fragment_my_page) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMyPageBinding.bind(view)
 
+        fetchUserData()
+        setupApplyButtonOnClickListener()
+        setupSignOutButtonOnClickListener()
+    }
+
+    private fun fetchUserData() {
         val currentUserId = Firebase.auth.currentUser?.uid ?: ""
-        val currentUserDB =
-            Firebase.database(DB_URL).reference.child(DB_USERS).child(currentUserId)
+        val currentUserDB = Firebase.database(DB_URL).reference.child(DB_USERS).child(currentUserId)
         currentUserDB.get().addOnSuccessListener {
             val currentUserItem = it.getValue(UserItem::class.java) ?: return@addOnSuccessListener
-
             binding.usernameEditText.setText(currentUserItem.userName)
             binding.descriptionTextView.setText(currentUserItem.description)
         }
+    }
 
+    private fun setupApplyButtonOnClickListener() {
         binding.applyButton.setOnClickListener {
             val userName = binding.usernameEditText.text.toString()
             val description = binding.descriptionTextView.text.toString()
 
             if (userName.isEmpty()) {
-                Toast.makeText(view.context, "유저 이름은 빈 값으로 두실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "유저 이름은 빈 값으로 두실 수 없습니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val user = mutableMapOf<String, Any>()
-            user[DB_USER_NAME] = userName
-            user[DB_USER_DESCRIPTION] = description
-
-            currentUserDB.updateChildren(user)
+            updateUserProfile(userName, description)
         }
+    }
+
+    private fun updateUserProfile(userName: String, description: String) {
+        val currentUserId = Firebase.auth.currentUser?.uid ?: ""
+        val currentUserDB = Firebase.database(DB_URL).reference.child(DB_USERS).child(currentUserId)
+
+        val user = mutableMapOf<String, Any>()
+        user[DB_USER_NAME] = userName
+        user[DB_USER_DESCRIPTION] = description
+
+        currentUserDB.updateChildren(user)
+    }
+
+    private fun setupSignOutButtonOnClickListener() {
         binding.signOutButton.setOnClickListener {
             Firebase.auth.signOut()
-            startActivity(Intent(view.context, SignInActivity::class.java))
+            startActivity(Intent(context, SignInActivity::class.java))
             activity?.finish()
         }
     }

@@ -11,7 +11,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.app
 import org.bmsk.beomchat.R
 import org.bmsk.beomchat.data.db.Key.Companion.DB_CHAT_ROOMS
 import org.bmsk.beomchat.data.db.Key.Companion.DB_URL
@@ -25,7 +24,6 @@ import org.bmsk.beomchat.ui.chatdetail.ChatActivity
 import java.util.UUID
 
 class UserFragment : Fragment(R.layout.fragment_user) {
-
     private lateinit var binding: FragmentUserBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -33,48 +31,40 @@ class UserFragment : Fragment(R.layout.fragment_user) {
 
         binding = FragmentUserBinding.bind(view)
 
-        val userAdapter = UserAdapter { otherUser ->
+        val userAdapter = createUserAdapter()
+
+        setupUserListRecyclerView(userAdapter)
+        loadUsers(userAdapter)
+    }
+
+    private fun createUserAdapter(): UserAdapter {
+        return UserAdapter { otherUser ->
             val myUserId = Firebase.auth.currentUser?.uid ?: ""
             val chatRoomDB =
                 Firebase.database(DB_URL).reference.child(DB_CHAT_ROOMS).child(myUserId)
                     .child(otherUser.userId ?: "")
 
-            chatRoomDB.get().addOnSuccessListener {
-                var chatRoomId = ""
-                if (it.value != null) {
-                    val chatRoom = it.getValue(ChatRoomItem::class.java)
-                    chatRoomId = chatRoom?.chatRoomId ?: ""
-                } else {
-                    chatRoomId = UUID.randomUUID().toString()
-                    val newChatRoom = ChatRoomItem(
-                        chatRoomId = chatRoomId,
-                        otherUserId = otherUser.userId,
-                        otherUserName = otherUser.userName
-                    )
-                    chatRoomDB.setValue(newChatRoom)
-                }
-
-                val intent = Intent(context, ChatActivity::class.java).apply {
-                    putExtra(PUT_EXTRA_OTHER_USER_ID, otherUser.userId)
-                    putExtra(PUT_EXTRA_CHAT_ROOM_ID, chatRoomId)
-                }
-
-                startActivity(intent)
+            chatRoomDB.get().addOnSuccessListener { snapshot ->
+                val chatRoomId = getChatRoomId(snapshot, otherUser)
+                navigateToChatActivity(otherUser, chatRoomId)
             }
         }
+    }
 
+    private fun setupUserListRecyclerView(userAdapter: UserAdapter) {
         binding.userListRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = userAdapter
         }
+    }
 
+    private fun loadUsers(userAdapter: UserAdapter) {
         val currentUserId = Firebase.auth.currentUser?.uid ?: ""
 
         Firebase.database(DB_URL).reference
             .child(DB_USERS)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-
                     val userItemList = mutableListOf<UserItem>()
 
                     snapshot.children.forEach {
@@ -91,7 +81,33 @@ class UserFragment : Fragment(R.layout.fragment_user) {
 
                 override fun onCancelled(error: DatabaseError) {
                 }
-            }
+            })
+    }
+
+    private fun getChatRoomId(snapshot: DataSnapshot, otherUser: UserItem): String {
+        var chatRoomId = ""
+        if (snapshot.value != null) {
+            val chatRoom = snapshot.getValue(ChatRoomItem::class.java)
+            chatRoomId = chatRoom?.chatRoomId ?: ""
+        } else {
+            chatRoomId = UUID.randomUUID().toString()
+            val newChatRoom = ChatRoomItem(
+                chatRoomId = chatRoomId,
+                otherUserId = otherUser.userId,
+                otherUserName = otherUser.userName
             )
+            snapshot.ref.setValue(newChatRoom)
+        }
+
+        return chatRoomId
+    }
+
+    private fun navigateToChatActivity(otherUser: UserItem, chatRoomId: String) {
+        val intent = Intent(context, ChatActivity::class.java).apply {
+            putExtra(PUT_EXTRA_OTHER_USER_ID, otherUser.userId)
+            putExtra(PUT_EXTRA_CHAT_ROOM_ID, chatRoomId)
+        }
+
+        startActivity(intent)
     }
 }

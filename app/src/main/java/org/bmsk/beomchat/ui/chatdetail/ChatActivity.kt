@@ -59,7 +59,6 @@ class ChatActivity : AppCompatActivity() {
 
         chatRoomId = intent.getStringExtra(PUT_EXTRA_CHAT_ROOM_ID) ?: return
         otherUserId = intent.getStringExtra(PUT_EXTRA_OTHER_USER_ID) ?: return
-
         myUserId = Firebase.auth.currentUser?.uid ?: ""
 
         initFirebase()
@@ -72,7 +71,6 @@ class ChatActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 val myUserItem = it.getValue(UserItem::class.java)
                 myUserName = myUserItem?.userName ?: ""
-
                 getOtherUserData()
             }
     }
@@ -83,7 +81,6 @@ class ChatActivity : AppCompatActivity() {
                 val otherUserItem = it.getValue(UserItem::class.java)
                 otherUserFcmToken = otherUserItem?.fcmToken.orEmpty()
                 chatAdapter.otherUserItem = otherUserItem
-
                 isInit = true
                 getChatData()
             }
@@ -99,19 +96,10 @@ class ChatActivity : AppCompatActivity() {
                     chatItemList.add(chatItem)
                     chatAdapter.submitList(chatItemList.toMutableList())
                 }
-
-                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                }
-
-                override fun onChildRemoved(snapshot: DataSnapshot) {
-                }
-
-                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                }
-
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+                override fun onChildRemoved(snapshot: DataSnapshot) {}
+                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+                override fun onCancelled(error: DatabaseError) {}
             })
     }
 
@@ -127,7 +115,6 @@ class ChatActivity : AppCompatActivity() {
                 )
             }
         })
-
         binding.chatRecyclerView.apply {
             layoutManager = linearLayoutManager
             adapter = chatAdapter
@@ -137,57 +124,57 @@ class ChatActivity : AppCompatActivity() {
     private fun initSendButton() {
         binding.sendButton.setOnClickListener {
             val message = binding.messageEditText.text.toString()
-
             if (message.isEmpty() || !isInit) {
                 return@setOnClickListener
             }
-
             val newChatItem = ChatItem(
                 message = message,
                 userId = myUserId,
             )
-
             Firebase.database(DB_URL).reference.child(DB_CHATS).child(chatRoomId).push().apply {
                 newChatItem.chatId = key
                 setValue(newChatItem)
             }
-
-            val updates: MutableMap<String, Any> = hashMapOf(
-                "$DB_CHAT_ROOMS/$myUserId/$otherUserId/$DB_LAST_MESSAGE" to message,
-                "$DB_CHAT_ROOMS/$otherUserId/$myUserId/$DB_LAST_MESSAGE" to message,
-                "$DB_CHAT_ROOMS/$otherUserId/$myUserId/$DB_CHAT_ROOM_ID" to chatRoomId,
-                "$DB_CHAT_ROOMS/$otherUserId/$myUserId/$DB_OTHER_USER_ID" to myUserId,
-                "$DB_CHAT_ROOMS/$otherUserId/$myUserId/$DB_OTHER_USER_NAME" to myUserName,
-            )
-
-            Firebase.database(DB_URL).reference.updateChildren(updates)
-
-            val root = JSONObject()
-            val notification = JSONObject()
-            notification.put("title", getString(R.string.app_name))
-            notification.put("body", message)
-
-            root.put("to", otherUserFcmToken)
-            root.put("priority", "high")
-            root.put("notification", notification)
-
-            val requestBody =
-                root.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
-            val request =
-                Request.Builder().post(requestBody).url(FCM_SEND_URL)
-                    .header("Authorization", "key=${getString(R.string.fcm_server_key)}")
-                    .build()
-            okHttpClient.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    e.stackTraceToString()
-                }
-
-                override fun onResponse(call: Call, response: Response) {
-                }
-            })
-
+            updateChatRoomInfo(message)
+            sendNotification(message)
             binding.messageEditText.text.clear()
         }
+    }
+
+    private fun updateChatRoomInfo(message: String) {
+        val updates: MutableMap<String, Any> = hashMapOf(
+            "$DB_CHAT_ROOMS/$myUserId/$otherUserId/$DB_LAST_MESSAGE" to message,
+            "$DB_CHAT_ROOMS/$otherUserId/$myUserId/$DB_LAST_MESSAGE" to message,
+            "$DB_CHAT_ROOMS/$otherUserId/$myUserId/$DB_CHAT_ROOM_ID" to chatRoomId,
+            "$DB_CHAT_ROOMS/$otherUserId/$myUserId/$DB_OTHER_USER_ID" to myUserId,
+            "$DB_CHAT_ROOMS/$otherUserId/$myUserId/$DB_OTHER_USER_NAME" to myUserName,
+        )
+
+        Firebase.database(DB_URL).reference.updateChildren(updates)
+    }
+
+    private fun sendNotification(message: String) {
+        val root = JSONObject()
+        val notification = JSONObject()
+        notification.put("title", getString(R.string.app_name))
+        notification.put("body", message)
+
+        root.put("to", otherUserFcmToken)
+        root.put("priority", "high")
+        root.put("notification", notification)
+
+        val requestBody =
+            root.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+        val request =
+            Request.Builder().post(requestBody).url(FCM_SEND_URL)
+                .header("Authorization", "key=${getString(R.string.fcm_server_key)}")
+                .build()
+        okHttpClient.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.stackTraceToString()
+            }
+            override fun onResponse(call: Call, response: Response) {}
+        })
     }
 
     companion object {

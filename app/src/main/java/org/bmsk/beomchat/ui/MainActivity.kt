@@ -19,7 +19,6 @@ import org.bmsk.beomchat.ui.chatroom.ChatListFragment
 import org.bmsk.beomchat.ui.mypage.MyPageFragment
 import org.bmsk.beomchat.ui.userlist.UserFragment
 
-
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val userFragment = UserFragment()
@@ -31,33 +30,34 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val currentUser = Firebase.auth.currentUser
+        checkUserLogin()
+        setupBottomNavigationView()
+        askNotificationPermission()
+    }
 
+    private fun checkUserLogin() {
+        val currentUser = Firebase.auth.currentUser
         if (currentUser == null) {
             startActivity(Intent(this, SignInActivity::class.java))
             finish()
         }
+    }
 
-        askNotificationPermission()
-
+    private fun setupBottomNavigationView() {
         binding.bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.userList -> {
                     replaceFragment(userFragment)
                     return@setOnItemSelectedListener true
                 }
-
                 R.id.chatRoomList -> {
                     replaceFragment(chatListFragment)
                     return@setOnItemSelectedListener true
                 }
-
                 R.id.myPage -> {
                     replaceFragment(myPageFragment)
                     return@setOnItemSelectedListener true
-
                 }
-
                 else -> {
                     return@setOnItemSelectedListener false
                 }
@@ -72,28 +72,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Declare the launcher at the top of your Activity/Fragment:
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
-        if (isGranted) {
-
-        } else {
+        if (!isGranted) {
+            // Handle permission not granted
         }
     }
 
     private fun askNotificationPermission() {
-        // This is only necessary for API level >= 33 (TIRAMISU)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
                 PackageManager.PERMISSION_GRANTED
             ) {
-                // FCM SDK (and your app) can post notifications.
-            } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                showPermissionRationalDialog()
-            } else {
-                // Directly ask for the permission
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                    showPermissionRationalDialog()
+                } else {
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
             }
         }
     }
